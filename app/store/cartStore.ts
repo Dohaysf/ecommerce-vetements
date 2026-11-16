@@ -17,6 +17,9 @@ export type CartItem = {
 
 type CartStore = {
   items: CartItem[];
+  isOpen: boolean;
+  openCart: () => void;
+  closeCart: () => void;
   addItem: (item: Omit<CartItem, "quantity">) => void;
   removeItem: (variantId: string) => void;
   updateQuantity: (variantId: string, quantity: number) => void;
@@ -29,6 +32,10 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      isOpen: false,
+
+      openCart: () => set({ isOpen: true }),
+      closeCart: () => set({ isOpen: false }),
 
       addItem: (newItem) => {
         const items = get().items;
@@ -36,6 +43,7 @@ export const useCartStore = create<CartStore>()(
 
         if (existing) {
           set({
+            isOpen: true,
             items: items.map((i) =>
               i.variantId === newItem.variantId
                 ? { ...i, quantity: Math.min(i.quantity + 1, i.stock) }
@@ -43,7 +51,10 @@ export const useCartStore = create<CartStore>()(
             ),
           });
         } else {
-          set({ items: [...items, { ...newItem, quantity: 1 }] });
+          set({
+            isOpen: true,
+            items: [...items, { ...newItem, quantity: 1 }],
+          });
         }
       },
 
@@ -69,6 +80,10 @@ export const useCartStore = create<CartStore>()(
       totalPrice: () =>
         get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
     }),
-    { name: "cart-storage" }
+    {
+      name: "cart-storage",
+      // On ne sauvegarde que les articles, pas l'état ouvert/fermé du tiroir
+      partialize: (state) => ({ items: state.items }),
+    }
   )
 );

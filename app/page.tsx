@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Cormorant_Garamond, Jost, La_Belle_Aurore } from "next/font/google";
 import CartIcon from "@/app/components/CartIcon";
+import WelcomeIntro from "@/app/components/WelcomeIntro";
 
 const display = Cormorant_Garamond({
   subsets: ["latin"],
@@ -239,6 +240,7 @@ export default async function Home({
       className={`${display.variable} ${hand.variable} ${body.variable} rv-root relative min-h-screen overflow-x-clip bg-[#F7F1E8] font-[family-name:var(--font-body)] text-[17px] leading-relaxed text-[#2A1B20]`}
     >
       <style>{CSS}</style>
+            <WelcomeIntro />
 
       {/* Grain de papier */}
       <svg
